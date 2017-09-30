@@ -1,18 +1,19 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://Scripts/World.gd" type="Script" id=1]
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=2]
 [ext_resource path="res://Images/platformer_sprites_base.png" type="Texture" id=3]
 [ext_resource path="res://Scenes/tilemap.xml" type="TileSet" id=4]
+[ext_resource path="res://Scenes/spiketiles.xml" type="TileSet" id=5]
 
-[sub_resource type="CircleShape2D" id=8]
+[sub_resource type="CapsuleShape2D" id=1]
 
 custom_solver_bias = 0.0
-radius = 33.1792
+radius = 10.8867
+height = 31.4658
 
-[sub_resource type="Animation" id=1]
+[sub_resource type="Animation" id=2]
 
-resource/name = "ascend"
 length = 1.0
 loop = false
 step = 0.1
@@ -27,9 +28,25 @@ tracks/0/keys = {
 "values": [ 48, 56 ]
 }
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=9]
 
-resource/name = "descend"
+resource/name = "death"
+length = 0.6
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 0.6 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 18, 23 ]
+}
+
+[sub_resource type="Animation" id=3]
+
 length = 1.0
 loop = true
 step = 0.1
@@ -44,9 +61,8 @@ tracks/0/keys = {
 "values": [ 56, 63 ]
 }
 
-[sub_resource type="Animation" id=3]
+[sub_resource type="Animation" id=4]
 
-resource/name = "fall"
 length = 0.1
 loop = false
 step = 0.1
@@ -61,7 +77,7 @@ tracks/0/keys = {
 "values": [ 46, 47 ]
 }
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=5]
 
 length = 0.9
 loop = true
@@ -77,9 +93,8 @@ tracks/0/keys = {
 "values": [ 0, 1, 2, 3, 3, 3, 2, 1, 0, 0 ]
 }
 
-[sub_resource type="Animation" id=5]
+[sub_resource type="Animation" id=6]
 
-resource/name = "jump"
 length = 0.3
 loop = false
 step = 0.1
@@ -94,7 +109,7 @@ tracks/0/keys = {
 "values": [ 42, 46 ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=7]
 
 length = 1.0
 loop = true
@@ -110,7 +125,7 @@ tracks/0/keys = {
 "values": [ 4, 12 ]
 }
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=8]
 
 length = 3.0
 loop = false
@@ -134,8 +149,8 @@ script/script = ExtResource( 1 )
 
 transform/pos = Vector2( 516.261, 411.683 )
 input/pickable = false
-shapes/0/shape = SubResource( 8 )
-shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 3.57492 )
 shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
@@ -144,7 +159,8 @@ script/script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 
-shape = SubResource( 8 )
+transform/pos = Vector2( 0, 3.57492 )
+shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
 
@@ -153,20 +169,21 @@ _update_shape_index = 0
 texture = ExtResource( 3 )
 vframes = 9
 hframes = 8
-frame = 48
+frame = 18
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/ascend = SubResource( 1 )
-anims/descend = SubResource( 2 )
-anims/fall = SubResource( 3 )
-anims/idle = SubResource( 4 )
-anims/jump = SubResource( 5 )
-anims/run = SubResource( 6 )
-anims/test = SubResource( 7 )
+anims/ascend = SubResource( 2 )
+anims/death = SubResource( 9 )
+anims/descend = SubResource( 3 )
+anims/fall = SubResource( 4 )
+anims/idle = SubResource( 5 )
+anims/jump = SubResource( 6 )
+anims/run = SubResource( 7 )
+anims/test = SubResource( 8 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -188,7 +205,28 @@ collision/bounce = 0.0
 collision/layers = 1
 collision/mask = 1
 occluder/light_mask = 1
-tile_data = IntArray( 0, 8, 15, 8, 65536, 8, 65551, 8, 131072, 8, 131087, 8, 196608, 8, 196623, 8, 262144, 8, 262159, 8, 327680, 8, 327695, 8, 393216, 8, 393231, 8, 458752, 8, 458767, 8, 524288, 8, 524289, 8, 524290, 8, 524291, 8, 524292, 8, 524293, 8, 524294, 8, 524295, 8, 524296, 8, 524297, 8, 524298, 8, 524299, 8, 524300, 8, 524301, 8, 524302, 8, 524303, 8, 589824, 8, 589825, 8, 589826, 8, 589827, 8, 589828, 8, 589829, 8, 589830, 8, 589831, 8, 589832, 8, 589833, 8, 589834, 8, 589835, 8, 589836, 8, 589837, 8, 589838, 8, 589839, 8 )
+tile_data = IntArray( 0, 8, 15, 8, 65536, 8, 65551, 8, 131072, 8, 131087, 8, 196608, 8, 196623, 8, 262144, 8, 262159, 8, 327680, 8, 327681, 8, 327695, 8, 393216, 8, 393217, 8, 393228, 0, 393231, 8, 458752, 8, 458753, 8, 458754, 8, 458761, 1, 458762, 0, 458764, 8, 458767, 8, 524288, 8, 524289, 8, 524290, 8, 524291, 8, 524292, 8, 524293, 8, 524294, 8, 524295, 8, 524296, 8, 524297, 8, 524298, 8, 524299, 8, 524300, 8, 524301, 8, 524302, 8, 524303, 8, 589824, 8, 589825, 8, 589826, 8, 589827, 8, 589828, 8, 589829, 8, 589830, 8, 589831, 8, 589832, 8, 589833, 8, 589834, 8, 589835, 8, 589836, 8, 589837, 8, 589838, 8, 589839, 8 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="spikeTiles" type="TileMap" parent="."]
+
+mode = 0
+tile_set = ExtResource( 5 )
+cell/size = Vector2( 64, 64 )
+cell/quadrant_size = 16
+cell/custom_transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+cell/half_offset = 2
+cell/tile_origin = 0
+cell/y_sort = false
+collision/use_kinematic = false
+collision/friction = 1.0
+collision/bounce = 0.0
+collision/layers = 1
+collision/mask = 1
+occluder/light_mask = 1
+tile_data = IntArray( 458756, 3, 458757, 3 )
 __meta__ = {
 "_edit_lock_": true
 }

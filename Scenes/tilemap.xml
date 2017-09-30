@@ -41,22 +41,22 @@
 		<vector2_array name="points" len="4"> 			-16, 16, -24, 0, 24, 0, 16, 16 </vector2_array>
 
 	</resource>
-	<resource type="ConvexPolygonShape2D" path="local://9">
+	<resource type="ConvexPolygonShape2D" path="local://15">
 		<real name="custom_solver_bias"> 0 </real>
 		<vector2_array name="points" len="4"> 			32, 32, 0, 32, 0, -32, 32, -32 </vector2_array>
 
 	</resource>
-	<resource type="ConvexPolygonShape2D" path="local://10">
+	<resource type="ConvexPolygonShape2D" path="local://16">
 		<real name="custom_solver_bias"> 0 </real>
 		<vector2_array name="points" len="4"> 			-16, -16, 0, -24, 0, 24, -16, 16 </vector2_array>
 
 	</resource>
-	<resource type="ConvexPolygonShape2D" path="local://14">
+	<resource type="ConvexPolygonShape2D" path="local://17">
 		<real name="custom_solver_bias"> 0 </real>
 		<vector2_array name="points" len="4"> 			-16, -16, 16, -16, 24, 0, -24, 0 </vector2_array>
 
 	</resource>
-	<resource type="ConvexPolygonShape2D" path="local://15">
+	<resource type="ConvexPolygonShape2D" path="local://18">
 		<real name="custom_solver_bias"> 0 </real>
 		<vector2_array name="points" len="4"> 			-32, 0, 32, 0, 32, 32, -32, 32 </vector2_array>
 
@@ -144,8 +144,8 @@
 		<resource name="6/occluder"></resource>		<vector2 name="6/navigation_offset"> 32, 32 </vector2>
 		<resource name="6/navigation"></resource>		<vector2 name="6/shape_offset"> 32, 32 </vector2>
 		<array name="6/shapes" len="2" shared="false">
-			<resource  resource_type="Shape2D" path="local://9">  </resource>
-			<resource  resource_type="Shape2D" path="local://10">  </resource>
+			<resource  resource_type="Shape2D" path="local://15">  </resource>
+			<resource  resource_type="Shape2D" path="local://16">  </resource>
 		</array>
 		<string name="7/name"> "USpike" </string>
 		<resource name="7/texture" external="0">  </resource>
@@ -156,8 +156,8 @@
 		<resource name="7/occluder"></resource>		<vector2 name="7/navigation_offset"> 32, 32 </vector2>
 		<resource name="7/navigation"></resource>		<vector2 name="7/shape_offset"> 32, 32 </vector2>
 		<array name="7/shapes" len="2" shared="false">
-			<resource  resource_type="Shape2D" path="local://14">  </resource>
-			<resource  resource_type="Shape2D" path="local://15">  </resource>
+			<resource  resource_type="Shape2D" path="local://17">  </resource>
+			<resource  resource_type="Shape2D" path="local://18">  </resource>
 		</array>
 		<string name="8/name"> "Wall" </string>
 		<resource name="8/texture" external="0">  </resource>
