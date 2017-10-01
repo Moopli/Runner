@@ -21,7 +21,8 @@ func _ready():
 	tween = get_node("RespawnTween");
 	camera = get_node("Camera2D");
 	intro_screen = get_node("IntroScreen");
-	var bgarea = get_node("BackgroundArea");
+#	var bgarea = get_node("BackgroundArea");
+	get_node("SamplePlayer").play("looperman");
 	set_process(true);
 	spawn_player(true);
 	camera.make_current();
@@ -75,7 +76,8 @@ func player_died():
 
 func _process(delta):
 	if Input.is_action_pressed("ui_cheat"):
-		print("cheat");
-		spawn_at_checkpoint("Checkpoint 11");
+		spawn_at_checkpoint("Checkpoint 8");
+	elif Input.is_action_pressed("ui_end"):
+		spawn_at_checkpoint("Checkpoint 12");
 		pass
 	pass

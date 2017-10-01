@@ -15,7 +15,7 @@ const FAST_CARD_MIN_SPEED = -21437;
 const FAST_CARD_MAX_SPEED = -214370;
 var fast_card_speed = FAST_CARD_MIN_SPEED;
 
-const END_TIME = 1.6;
+const END_TIME = 2.4;
 const SHOW_TITLE_TIME = 0.8;
 
 var title_shown = false;
@@ -46,14 +46,14 @@ func _fixed_process(delta):
 	if time > SHOW_TITLE_TIME and title_card_static == null:
 		title_card_static = title_card_scene.instance();
 		add_child(title_card_static);
-	if time > SHOW_TITLE_TIME + 0.1 and time < SHOW_TITLE_TIME + 0.3:
+	if time > SHOW_TITLE_TIME + 0.1 and time < SHOW_TITLE_TIME + 0.57:
 		if title_card_static.is_hidden():
 			title_card_static.show();
 		else:
 			title_card_static.hide();
 	
 	
-	if time >= SHOW_TITLE_TIME + 0.3 and not title_shown:
+	if time >= SHOW_TITLE_TIME + 0.6 and not title_shown:
 		title_card_static.show();
 		for card in title_cards_fast_moving:
 			remove_child(card);
