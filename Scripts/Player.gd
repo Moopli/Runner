@@ -37,14 +37,20 @@ func _ready():
 	set_fixed_process(true);
 	pass
 
-func switch_to_anim(name):
-	if anim.get_current_animation() != name:
+func switch_to_anim(name, redo=false):
+	if anim.get_current_animation() != name or (redo and anim.get_current_animation_pos() > anim.get_current_animation_length() * 0.9):
 		anim.play(name);
 
 func _fixed_process(delta):
 	
 	var jump = Input.is_action_pressed("player_jump");
-	if not alive: jump = false;
+	if not alive:
+		var parent = get_parent();
+		if parent == null:
+			print("Parent of Player is null");
+		else:
+			parent.player_died();
+		jump = false;
 	
 	var n = null;
 	
@@ -69,8 +75,8 @@ func _fixed_process(delta):
 			# acceleration = n.slide(acceleration);
 		if n.y > 0.01:
 			jump_state = FALLING;
-			velocity = n.slide(velocity) + 0.2 * delta * n;
-			velocity.y = -1;
+			velocity = n.slide(velocity) + 1.2 * delta * n;
+			# velocity.y = 1;
 	elif raycast.is_colliding():
 		jump_state = LANDED;
 		n = raycast.get_collision_normal();
@@ -85,16 +91,19 @@ func _fixed_process(delta):
 		velocity.x *= 1.2;
 		jump_state = JUMPING;
 		time_since_grounded = 1000;
+		switch_to_anim("jump", true);
 	if (not jump or velocity.y > 0) and jump_state == JUMPING:
 		jump_state = FALLING;
+	if jump_state == FALLING:
 		if velocity.y < 0: 
-			velocity.y = 0; 
+			velocity.y *= pow(0.2, delta);
 	
 	# print(JUMP_STATES[jump_state]);
 
 	if jump_state == LANDED:
 		acceleration.y = 0;
 		time_since_grounded = 0;
+		velocity = velocity.normalized() * RUN_SPEED;
 		if alive:
 			if n == null or abs(n.x) < 0.01:
 				switch_to_anim("run");
