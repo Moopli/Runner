@@ -10,6 +10,7 @@ var camera;
 const RESPAWN_DELAY = 0.8;
 var timer_running = false;
 var tween_running = false;
+var current_checkpoint = null;
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -19,12 +20,20 @@ func _ready():
 	tween = get_node("RespawnTween");
 	camera = get_node("RespawnCamera");
 	set_fixed_process(true);
-	spawn_player();
+	spawn_player(true);
 	pass
 
-func spawn_player():
+func set_checkpoint(new_checkpoint):
+	if current_checkpoint != null:
+		current_checkpoint.disable_checkpoint();
+	current_checkpoint = new_checkpoint;
+
+func spawn_player(first_spawn = false):
 	var player = player_scene.instance();
-	player.set_pos(get_node("SpawnLocation").get_pos());
+	if first_spawn:
+		player.set_pos(get_node("SpawnLocation").get_pos());
+	else:
+		player.set_pos(current_checkpoint.get_pos());
 	player.get_node("Camera2D").make_current();
 	player.show();
 	add_child(player);

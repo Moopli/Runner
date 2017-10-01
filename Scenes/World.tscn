@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://Scripts/World.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/background.xml" type="TileSet" id=2]
 [ext_resource path="res://Scenes/spiketiles.xml" type="TileSet" id=3]
 [ext_resource path="res://Scenes/tilemap.xml" type="TileSet" id=4]
+[ext_resource path="res://Scenes/Checkpoint.tscn" type="PackedScene" id=5]
 
 [node name="World" type="Node2D"]
 
@@ -71,7 +72,7 @@ __meta__ = {
 
 [node name="SpawnLocation" type="Node2D" parent="."]
 
-transform/pos = Vector2( 447.849, 442.298 )
+transform/pos = Vector2( 461.358, 429.869 )
 
 [node name="RespawnTimer" type="Timer" parent="."]
 
@@ -105,5 +106,11 @@ drag_margin/left = 0.2
 drag_margin/top = 0.2
 drag_margin/right = 0.2
 drag_margin/bottom = 0.2
+
+[node name="Checkpoint" parent="." instance=ExtResource( 5 )]
+
+[node name="Checkpoint 2" parent="." instance=ExtResource( 5 )]
+
+transform/pos = Vector2( 1374.21, -82.1354 )
 
 
