@@ -10,4 +10,5 @@ func _ready():
 	pass
 
 func body_enter(body):
-	print("body entered");
+	pass;
+	
