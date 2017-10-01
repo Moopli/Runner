@@ -33,17 +33,35 @@ var is_pushed_down = false;
 var ceiling_downjump = false;
 
 var smash_anim = false;
+var intro_scene = false;
+
+const FAST_LANDING_SPEED = 2500;
+
+const NOT_RECOVERING = 0;
+const RECOVERING = 1;
+
+var fast_landing_anim_state = NOT_RECOVERING;
+var fast_landing_timer = 0;
+
+var prev_velocity = null;
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	velocity.x = RUN_SPEED;
 	
-	raycast = find_node("RayCast2D");
-	sprite = find_node("Sprite");
-	anim = find_node("AnimationPlayer");
+	raycast = get_node("RayCast2D");
+	sprite = get_node("Sprite");
+	anim = get_node("AnimationPlayer");
 	set_fixed_process(true);
-	pass
+
+func begin_intro_scene():
+	intro_scene = true;
+
+func end_intro_scene():
+	intro_scene = false;
+	get_node("Camera2D").make_current();
+	velocity = Vector2(0.1, 9000);
 
 func switch_to_anim(name, redo=false):
 	if anim.get_current_animation() != name or (redo and anim.get_current_animation_pos() > anim.get_current_animation_length() * 0.9):
@@ -56,6 +74,11 @@ func kill_player():
 	alive = false;
 
 func _fixed_process(delta):
+	if intro_scene:
+		switch_to_anim("fall");
+		if Input.is_action_pressed("player_jump"):
+			get_parent().end_intro();
+		return;
 
 	var jump = Input.is_action_pressed("player_jump");
 	if not jump: jump_released = true; # for ensuring you can't just hold down spacebar
@@ -89,7 +112,13 @@ func _fixed_process(delta):
 		else:
 			# shallow slope 
 			jump_state = LANDED;
+			# we should do a quick landing animation - smash then reverse smash
+#			if prev_velocity.y > FAST_LANDING_SPEED:
+#				fast_landing_anim_state = RECOVERING;
+#				fast_landing_timer = 0;
 			velocity = n.slide(velocity).normalized() * RUN_SPEED;
+#			if fast_landing_anim_state == RECOVERING:
+#				velocity = velocity.normalized() * 0.01;
 			# acceleration = n.slide(acceleration);
 		if n.y > 0.01:
 			jump_state = FALLING;
@@ -116,9 +145,12 @@ func _fixed_process(delta):
 	if jump and (jump_state == LANDED or time_since_grounded < 0.18) and jump_released:
 		jump_released = false;
 		time_since_grounded = 1000;
+		fast_landing_timer = 1000;
+#		if fast_landing_anim_state == RECOVERING:
+#			fast_landing_anim_state = NOT_RECOVERING;
+#			velocity = velocity.normalized() * RUN_SPEED;
 		if ceiling_downjump:
-			print("smash");
-			velocity = Vector2(sign(velocity.x) * 0.1, -JUMP_SPEED);
+			velocity = Vector2(sign(velocity.x) * 0.1, -JUMP_SPEED * 4);
 			switch_to_anim("smash");
 			smash_anim = true;
 		else:
@@ -132,6 +164,13 @@ func _fixed_process(delta):
 	if jump_state == FALLING:
 		if velocity.y < 0: 
 			velocity.y *= pow(0.06, delta);
+#	
+#	if fast_landing_anim_state == RECOVERING:
+#		if fast_landing_timer > 0.12:
+#			fast_landing_timer = 1000;
+#			fast_landing_anim_state = NOT_RECOVERING;
+#			velocity = velocity.normalized() * RUN_SPEED;
+#		fast_landing_timer += delta;
 	
 	# print(JUMP_STATES[jump_state]);
 
@@ -141,6 +180,9 @@ func _fixed_process(delta):
 		time_since_grounded = 0;
 		velocity = velocity.normalized() * RUN_SPEED;
 		if alive:
+#			if fast_landing_anim_state == RECOVERING:
+#				print("recover");
+#				switch_to_anim("recover");
 			if n == null or abs(n.x) < 0.01:
 				switch_to_anim("run");
 			elif (n.x < 0) == (velocity.x < 0): # down slope
@@ -168,7 +210,9 @@ func _fixed_process(delta):
 			sprite.set_scale(Vector2(1,1));
 	else:
 		switch_to_anim("death");
+		velocity.x = 0;
 
+	prev_velocity = velocity;
 	velocity.y += acceleration.y * delta;
 	if not alive: velocity.x = 0;
 	move(velocity * delta);
