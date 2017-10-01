@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=1]
+[gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
 [ext_resource path="res://Images/platformer_sprites_base.png" type="Texture" id=2]
@@ -124,6 +124,23 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id=9]
 
+resource/name = "smash"
+length = 0.1
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 0.1 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 40, 41 ]
+}
+
+[sub_resource type="Animation" id=10]
+
 length = 3.0
 loop = false
 step = 0.1
@@ -162,7 +179,7 @@ _update_shape_index = 0
 texture = ExtResource( 2 )
 vframes = 9
 hframes = 8
-frame = 1
+frame = 40
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -176,7 +193,8 @@ anims/fall = SubResource( 5 )
 anims/idle = SubResource( 6 )
 anims/jump = SubResource( 7 )
 anims/run = SubResource( 8 )
-anims/test = SubResource( 9 )
+anims/smash = SubResource( 9 )
+anims/test = SubResource( 10 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
