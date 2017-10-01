@@ -26,6 +26,11 @@ var anim;
 var raycast;
 var sprite;
 
+var prev_jump_button_state = false;
+var jump_button_state = false;
+
+var is_pushed_down = false;
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -41,9 +46,16 @@ func switch_to_anim(name, redo=false):
 	if anim.get_current_animation() != name or (redo and anim.get_current_animation_pos() > anim.get_current_animation_length() * 0.9):
 		anim.play(name);
 
+func kill_player():
+	set_collision_mask_bit(1, false);
+	switch_to_anim("death");
+	alive = false;
+
 func _fixed_process(delta):
 	
-	var jump = Input.is_action_pressed("player_jump");
+	prev_jump_button_state = jump_button_state;
+	jump_button_state = Input.is_action_pressed("player_jump");
+	var jump = jump_button_state;# and not prev_jump_button_state;
 	if not alive:
 		var parent = get_parent();
 		if parent == null:
@@ -58,16 +70,18 @@ func _fixed_process(delta):
 	if is_colliding():
 		var col = get_collider();
 		n = get_collision_normal();
+		if n.y < -0.01 and is_pushed_down:
+			velocity.x = -velocity.x;
+			is_pushed_down = false;
 		if col.get_name() == "spikeTiles":
 			# die
 			# disable layer 2
-			set_collision_mask_bit(1, false);
-			switch_to_anim("death");
-			alive = false;
+			kill_player();
 		elif abs(n.x) - 0.1 > abs(n.y):
 			# steep slope
 			velocity.x = -velocity.x;
 			time_since_grounded = 0;
+			is_pushed_down = false;
 		else:
 			# shallow slope 
 			jump_state = LANDED;
@@ -76,27 +90,32 @@ func _fixed_process(delta):
 		if n.y > 0.01:
 			jump_state = FALLING;
 			velocity = n.slide(velocity) + 1.2 * delta * n;
+			is_pushed_down = true;
 			# velocity.y = 1;
+		else:
+			is_pushed_down = false;
 	elif raycast.is_colliding():
+		is_pushed_down = false;
 		jump_state = LANDED;
 		n = raycast.get_collision_normal();
 		if not jump:
 			var p = raycast.get_collision_point();
 			move(p-get_global_pos());
-	elif not jump:
+	elif not jump_button_state:
 		jump_state = FALLING;
+		is_pushed_down = false;
 
-	if jump and (jump_state == LANDED or time_since_grounded < 0.12):
+	if jump and (jump_state == LANDED or time_since_grounded < 0.25):
 		velocity.y = JUMP_SPEED;
 		velocity.x *= 1.2;
 		jump_state = JUMPING;
 		time_since_grounded = 1000;
 		switch_to_anim("jump", true);
-	if (not jump or velocity.y > 0) and jump_state == JUMPING:
+	if (not jump_button_state or velocity.y > 0) and jump_state == JUMPING:
 		jump_state = FALLING;
 	if jump_state == FALLING:
 		if velocity.y < 0: 
-			velocity.y *= pow(0.2, delta);
+			velocity.y *= pow(0.06, delta);
 	
 	# print(JUMP_STATES[jump_state]);
 

@@ -19,9 +19,15 @@ func _ready():
 	timer.connect("timeout", self, "respawn_player");
 	tween = get_node("RespawnTween");
 	camera = get_node("RespawnCamera");
-	set_fixed_process(true);
+	var bgarea = get_node("BackgroundArea");
+	bgarea.connect("body_exit", self, "on_player_exit");
+	set_process(true);
 	spawn_player(true);
 	pass
+
+func on_player_exit(body):
+	print("diediedie");
+	body.kill_player();
 
 func set_checkpoint(new_checkpoint):
 	if current_checkpoint != null:
@@ -38,46 +44,33 @@ func spawn_player(first_spawn = false):
 	player.show();
 	add_child(player);
 
-func replace_player(obj=null, key=null):
-	print("replacing");
-	tween_running = false;
-	remove_child(get_node("Player"));
-	spawn_player();
-	print("respawned");
+func spawn_at_checkpoint(checkpoint):
+	set_checkpoint(get_node(checkpoint));
+	replace_player();
 
-func tween_log(o, k, e, v):
-	print("tween step");
+func replace_player():
+#	print("replacing");
+	var player = get_node("Player");
+	if player != null: remove_child(player);
+	spawn_player();
+#	print("respawned");
 
 func respawn_player():
 	timer_running = false;
 	timer.stop();
-	
 	replace_player();
-#	if tween_running:
-#		return;
-#	print("tweening");
-#	timer.set_one_shot(false);
-#	var player = get_node("Player");
-#	player.hide();
-#	camera.set_pos(player.get_node("Camera2D").get_global_pos());
-#	camera.make_current();
-#	tween.connect("tween_complete", self, "replace_player");
-#	tween.connect("tween_step", self, "tween_log");
-#	tween.interpolate_property(camera, "transform/pos", camera.get_pos(), get_node("SpawnLocation").get_pos() + Vector2(0, -64), 0.2, Tween.TRANS_EXPO, Tween.EASE_OUT);
-#	tween.start();
-#	print("foo");
-#	print(tween.is_active());
-#	tween_running = true;
-#	
 
 func player_died():
 	if not timer_running and not tween_running:
 		timer_running = true;
-		print("died");
+#		print("died");
 		timer.set_wait_time(RESPAWN_DELAY);
 	#	timer.set_one_shot(true);
 		timer.start();
 
 func _process(delta):
-	
+	if Input.is_action_pressed("ui_cheat"):
+		print("cheat");
+		spawn_at_checkpoint("Checkpoint 5");
+		pass
 	pass
