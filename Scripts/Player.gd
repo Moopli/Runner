@@ -12,6 +12,7 @@ const LANDED = 2;
 const JUMP_SPEED = -900;
 const GRAVITY = 1500;
 const RUN_SPEED = 300;
+const SPEED_CAP = 100000;
 
 var speed = 4;
 var moving_left = 0;
@@ -76,8 +77,8 @@ func kill_player():
 func _fixed_process(delta):
 	if intro_scene:
 		switch_to_anim("fall");
-		if Input.is_action_pressed("player_jump"):
-			get_parent().end_intro();
+#		if Input.is_action_pressed("player_jump"):
+#			get_parent().end_intro();
 		return;
 
 	var jump = Input.is_action_pressed("player_jump");
@@ -141,6 +142,9 @@ func _fixed_process(delta):
 	elif not jump:
 		jump_state = FALLING;
 		is_pushed_down = false;
+	elif not jump_released and jump_state == LANDED:
+		jump_state = FALLING;
+		is_pushed_down = false;
 
 	if jump and (jump_state == LANDED or time_since_grounded < 0.18) and jump_released:
 		jump_released = false;
@@ -150,7 +154,7 @@ func _fixed_process(delta):
 #			fast_landing_anim_state = NOT_RECOVERING;
 #			velocity = velocity.normalized() * RUN_SPEED;
 		if ceiling_downjump:
-			velocity = Vector2(sign(velocity.x) * 0.1, -JUMP_SPEED * 4);
+			velocity = Vector2(sign(velocity.x) * 0.1, -JUMP_SPEED * 2);
 			switch_to_anim("smash");
 			smash_anim = true;
 		else:
@@ -215,5 +219,6 @@ func _fixed_process(delta):
 	prev_velocity = velocity;
 	velocity.y += acceleration.y * delta;
 	if not alive: velocity.x = 0;
+	velocity = velocity.clamped(SPEED_CAP);
 	move(velocity * delta);
 	pass
