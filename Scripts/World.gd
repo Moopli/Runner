@@ -26,6 +26,7 @@ func _ready():
 	set_process(true);
 	spawn_player(true);
 	camera.make_current();
+	get_tree().set_pause(true);
 	pass
 
 func end_intro():
